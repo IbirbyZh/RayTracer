@@ -38,6 +38,7 @@ public:
     void lab(Point3D&& _lab);
     
     void increaseLight(const double& intensity);
+    void decreaseLight(const double& intensity);
 private:
     Point3D __lab;
     static void helper(double& f);

@@ -9,24 +9,47 @@
 #ifndef KDTree_hpp
 #define KDTree_hpp
 
-#include "IObject.hpp"
+#include "Polygon.hpp"
 #include "Ray.hpp"
 #include <vector>
+#include "ElementaryPlane.hpp"
+
+static const int MAX_HEIGHT = 10;
+
+struct mySpec{
+    mySpec(const Polygon* p, const Box* b);
+    const Polygon* object;
+    const Box* box;
+};
+
+struct mySpec2{
+    mySpec2(const double& _value, const mySpec* b);
+    double value;
+    const mySpec* object;
+    bool operator < (const mySpec2& a) const;
+};
 
 class Node{
 public:
-    Node(const std::vector<const IObject * const> _objects);
-private:
-    const std::vector<const IObject* const>& objects;
-    const std::vector<const Box> boxes;
-    Node *left, *right;
+    Node();
+    void split(int h);
+    std::vector<mySpec> objectsWithBox;
+    Box mainBox;
+    ElementaryPlane splitPlane;
+    Node *left, *right, *parent;
+    void init(const std::vector<mySpec2>::iterator& begin, const std::vector<mySpec2>::iterator& end);
+    bool crossing(const Ray& ray, Point3D& x, const Polygon* &object) const;
+    bool crossInThis(const Ray& ray, Point3D& x, const Polygon* &object) const;
 };
 
-class KRTree{
+class KDTree{
 public:
-    KRTree(const std::vector<const IObject * const> _objects);
+    KDTree(const std::vector<Polygon>& _objects);
+    bool crossing(const Ray& ray, Point3D& x, const Polygon* &object) const;
 private:
     Node *head;
+    const std::vector<Polygon>& objects;
+    std::vector<Box> boxes;
 };
 
 #endif /* KDTree_hpp */

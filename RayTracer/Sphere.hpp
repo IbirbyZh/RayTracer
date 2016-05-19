@@ -14,12 +14,8 @@
 class Sphere : public IObject{
 public:
     Sphere();
-    Sphere(const Point3D& _S, const double& _radius,
-             const RGB& _color,
-             const double& _reflect, const double& _refract);
-    Sphere(Point3D&& _S, double&& _raduis,
-             RGB&& _color,
-             double&& _reflect, double&& _refract);
+    Sphere(const Point3D& _S, const double& _radius);
+    Sphere(Point3D&& _S, double&& _raduis);
     virtual ~Sphere();
     
     virtual bool crossing(const Ray& ray, Point3D& x) const;

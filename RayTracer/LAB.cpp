@@ -66,9 +66,21 @@ void LAB::lab(Point3D &&_lab){__lab = std::move(_lab);}
 
 void LAB::increaseLight(const double& intensity)
 {
-    double _intensity = std::fmin(100, intensity);
+    if (intensity < 1){
+        return;
+    }
     double ___l = __lab.x();
-    __lab.x(___l + (90 - ___l) / 100 * _intensity);
+    if (___l <= 100){
+        __lab.x(std::fmin(___l * intensity, 100));
+    }
+}
+
+void LAB::decreaseLight(const double& intensity)
+{
+    double ___l = __lab.x();
+    if (___l <= 100){
+        __lab.x(___l / intensity);
+    }
 }
 
 void LAB::helper(double& f)

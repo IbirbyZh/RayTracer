@@ -10,45 +10,35 @@
 #include <cassert>
 #include <vector>
 #include "/sw/include/cairo/cairo.h"
-#include "IObject.hpp"
+#include "Polygon.hpp"
 #include "Sun.hpp"
+#include "Ray.hpp"
+#include "KDTree.hpp"
+#include <utility>
+#include "Reader.hpp"
+#include "Scene.hpp"
+#include <chrono>
 
-static const int DPI = 50;
-static const double MAX_DISTANCE = 1E9;
-static const double MAGIC_CONST = 500;
-static const double DELTA_CONST = 1E-3;
+static const double DELTA_CONST = 1E-6;
+static const double DEC = 20;
 
-bool findPoint(const Point3D& x0, const Point3D& a, std::vector<IObject*> objects,
-               Point3D& x, IObject*& object)
+bool findPoint(const Ray& ray,
+               Point3D& x, const Polygon*& object, const KDTree& kd)
 {
-    double dist = MAX_DISTANCE;
-    bool ans = false;
-    for(auto i = objects.begin(); i < objects.end(); ++i){
-        Point3D xtemp;
-        if((*i)->crossing(x0, a, xtemp)){
-            double temp;
-            if(dist > (temp =(x0 - xtemp).length())){
-                dist = std::move(temp);
-                object = (*i);
-                x = std::move(xtemp);
-                ans = true;
-            }
-        }
-    }
-    return ans;
+    return kd.crossing(ray, x, object);
 }
 
-void rayTrace(const Point3D& x0, const Point3D& a, std::vector<IObject*> objects,
-              std::vector<Sun> suns, RGB& rgb)
+void rayTrace(const Ray& ray,
+              std::vector<Sun>& suns, RGB& rgb, Scene& scene, const KDTree& kd)
 {
     rgb = RGB();
     Point3D x;
-    IObject* object;
-    if(findPoint(x0, a, objects, x, object)){
+    const Polygon* object;
+    if(findPoint(ray, x, object, kd)){
         LAB lcolor(XYZ(object->color()));
-        lcolor.l(10);
+        lcolor.decreaseLight(DEC);
         Point3D delta = object -> normal(x);
-        if(delta * a > 0){
+        if(delta * ray.rail() > 0){
             delta *= -1;
         }
         delta *= DELTA_CONST;
@@ -56,13 +46,14 @@ void rayTrace(const Point3D& x0, const Point3D& a, std::vector<IObject*> objects
             Point3D sunPoint;
             double coef = (i->S() - x).normalize() * (object->normal(x));
             coef *= coef;
-            if(findPoint(x + delta, (i->S() - x).normalize(), objects, sunPoint, object)){
+            if(findPoint(Ray(x + delta, (i->S() - x).normalize()), sunPoint, object, kd)){
                 double dist;
-                if((x - sunPoint).length2() > (dist = (x - i->S()).length2())){                    lcolor.increaseLight(coef * MAGIC_CONST / dist * i->intensity());
+                if((x - sunPoint).length2() > (dist = (x - i->S()).length2())){
+                    lcolor.increaseLight(DEC * coef * scene.normDist * scene.normDist / dist * i->intensity() / scene.normPower);
                 }
             }else{
                 double dist = (x - i->S()).length2();
-                lcolor.increaseLight(coef * MAGIC_CONST / dist * i->intensity());
+                lcolor.increaseLight(DEC * coef * scene.normDist * scene.normDist / dist * i->intensity() / scene.normPower);
             }
         }
         rgb = RGB(XYZ(lcolor));
@@ -70,110 +61,87 @@ void rayTrace(const Point3D& x0, const Point3D& a, std::vector<IObject*> objects
 }
 
 int main(int argc, const char * argv[]) {
-    /*
-    srand(42);
-    std::vector<float> r,g,b;
-    int n = 10;
-    for(int i = 0; i < n; ++i){
-        r.push_back(static_cast<float>((rand() % 256)) / 256);
-        g.push_back(static_cast<float>((rand() % 256)) / 256);
-        b.push_back(static_cast<float>((rand() % 256)) / 256);
-    }
-    */
-        /*
-    for(int i = 0; i < W; i += 5){
-        for(int j = 0; j < H; j += 5){
-            int ind = (i + j) % n;
-            cairo_set_source_rgb(cr, r[ind], g[ind], b[ind]);
-            cairo_rectangle (cr, i, j, 1, 1);
-            cairo_fill (cr);
-        }
-    }
-    */
-    
-    
-    freopen("input.txt", "r", stdin);
-    double height, width;
-    int n, m;
-    double x, y, z;
-    scanf("%lf%lf%lf", &x, &y, &z);
-    Point3D x0(std::move(x), std::move(y), std::move(z));
-    scanf("%lf%lf%lf", &x, &y, &z);
-    Point3D a(std::move(x), std::move(y), std::move(z));
-    a -= x0;
-    Point3D w = a % Point3D(0, 0, 1);
-    w.normalize();
-    Point3D h = a % w;
-    h.normalize();
-    scanf("%lf%lf%d%d", &width, &height, &n, &m);
-    std::vector<IObject*> objects(n, NULL);
+    //FileReader reader("input.rt");
+    //FileReader reader("spheres_pure1.rt");
+    FileReader reader("gnome_pure.rt");
+    std::chrono::time_point<std::chrono::system_clock> start, end;
+    Scene scene;
+    std::vector<Polygon> objects;
     std::vector<Sun> suns;
-    for(int i = 0; i < n; ++i){
-        int type;
-        double r, g, b, reflect, refract;
-        scanf("%d%lf%lf%lf%lf%lf", &type, &r, &g, &b, &reflect, &refract);
-        if(type == triangle){
-            double x1, y1, z1, x2, y2, z2, x3, y3, z3;
-            scanf("%lf%lf%lf%lf%lf%lf%lf%lf%lf",
-                  &x1, &y1, &z1, &x2, &y2, &z2, &x3, &y3, &z3);
-            objects[i] = createObject(triangle, r, g, b, reflect, refract,
-                                      x1, y1, z1, x2, y2, z2, x3, y3, z3);
-        }
-        if(type == sphere){
-            double x1, y1, z1, rad;
-            scanf("%lf%lf%lf%lf",
-                  &x1, &y1, &z1, &rad);
-            objects[i] = createObject(sphere, r, g, b, reflect, refract,
-                                      x1, y1, z1, rad);
-        }
-        if(type == quadrangle){
-            double x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4;
-            scanf("%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf",
-                  &x1, &y1, &z1, &x2, &y2, &z2, &x3, &y3, &z3, &x4, &y4, &z4);
-            objects[i] = createObject(quadrangle, r, g, b, reflect, refract,
-                                      x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-        }
-        assert(objects[i] != NULL);
-    }
-    suns.reserve(m);
-    for(int i = 0; i < m; ++i){
-        double x, y, z, intensity;
-        scanf("%lf%lf%lf%lf", &x, &y, &z, &intensity);
-        suns.push_back(Sun(Point3D(std::move(x), std::move(y), std::move(z)), std::move(intensity)));
-    }
-    Point3D dw = w;
-    dw *= (width / 2);
-    Point3D dh = h;
-    dh *= (height / 2);
-    Point3D x1 = x0 + a - dw - dh;
-    dw.normalize();
-    dh.normalize();
-    dw /= DPI;
-    dh /= DPI;
+    std::cout<<"Start Read\n";
+    start = std::chrono::system_clock::now();
+    reader.Read(scene, suns, objects);
+    end = std::chrono::system_clock::now();
+    double l = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count()
+    / static_cast<double>(1000);
+    std::cout << "Read time : " << l << "s\n";
+    
+    start = std::chrono::system_clock::now();
+    KDTree kd(objects);
+    end = std::chrono::system_clock::now();
+    l = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count()
+    / static_cast<double>(1000);
+    std::cout << "KD time : " << l << "s\n";
     
     cairo_surface_t *surface;
     cairo_t *cr;
     surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
-                                         static_cast<int>(height * DPI),
-                                         static_cast<int>(width * DPI));
+                                         static_cast<int>(RIGHT_MAX / ANTI_ALI),
+                                         static_cast<int>(DOWN_MAX / ANTI_ALI));
     cr = cairo_create(surface);
     
-    h = Point3D();
-    for(int i = 0; i < width * DPI; ++i){
-        w = Point3D();
-        for(int j = 0; j < height * DPI; ++j){
-            RGB rgb;
-            rayTrace(x0, (x1 + w + h - x0).normalize(), objects, suns, rgb);
-            //rgb.adecvat();
-            //assert(rgb.r() <= 1 && rgb.g() <= 1 && rgb.b() <= 1);
-            //assert(rgb.r() >= 0 && rgb.g() >= 0 && rgb.b() >= 0);
-            cairo_set_source_rgb(cr, rgb.r(), rgb.g(), rgb.b());
-            cairo_rectangle (cr, j, i, 1, 1);
-            cairo_fill (cr);
-            w += dw;
+    Point3D h, x0 = scene.origin();
+    scene.toStart();
+    int i = 0;
+    start = std::chrono::system_clock::now();
+    std::vector<std::vector<RGB>> rgb(RIGHT_MAX, std::vector<RGB>(DOWN_MAX));
+    while(scene.next(h)){
+        rayTrace(Ray(x0, (h - x0).normalize()), suns, rgb[i % RIGHT_MAX][i / RIGHT_MAX], scene, kd);
+        //rayTrace(Ray(x0, (h - x0).normalize()), suns, rgb[RIGHT_MAX - i % RIGHT_MAX - 1][i / RIGHT_MAX], scene, kd);
+        //rgb.adecvat();
+        //assert(rgb.r() <= 1 && rgb.g() <= 1 && rgb.b() <= 1);
+        //assert(rgb.r() >= 0 && rgb.g() >= 0 && rgb.b() >= 0);
+        ++i;
+        if (i == RIGHT_MAX * DOWN_MAX / 4){
+            end = std::chrono::system_clock::now();
+            double l = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count()
+            / static_cast<double>(1000);
+            std::cout << "25%,  Time: " << l << "s\n";
         }
-        h += dh;
+        if (i == RIGHT_MAX * DOWN_MAX / 2){
+            end = std::chrono::system_clock::now();
+            double l = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count()
+            / static_cast<double>(1000);
+            std::cout << "50%,  Time: " << l << "s\n";
+        }
+        if (i == RIGHT_MAX * DOWN_MAX / 4 * 3){
+            end = std::chrono::system_clock::now();
+            double l = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count()
+            / static_cast<double>(1000);
+            std::cout << "75%,  Time: " << l << "s\n";
+        }
+        
     }
+    
+    for(int i = 0; i < RIGHT_MAX/ANTI_ALI; ++i){
+        for(int j = 0; j < DOWN_MAX/ANTI_ALI; ++j){
+            Point3D crgb;
+            for(int l = 0; l < ANTI_ALI; ++l){
+                for(int k = 0; k < ANTI_ALI; ++k){
+                    crgb += rgb[ANTI_ALI * i + l][ANTI_ALI * j + k].rgb();
+                }
+            }
+            crgb /= ANTI_ALI * ANTI_ALI;
+            cairo_set_source_rgb(cr, crgb.x(), crgb.y(), crgb.z());
+            cairo_rectangle (cr, i, j, 1, 1);
+            cairo_fill (cr);
+        }
+    }
+    
+    end = std::chrono::system_clock::now();
+    l = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count()
+    / static_cast<double>(1000);
+    std::cout << "100%, Time: " << l << "s\n";
     cairo_set_source_rgb(cr, 0.5, 0.5, 0.5);
     cairo_rectangle (cr, 0, 0, 10, 10);
     cairo_fill (cr);
@@ -183,8 +151,8 @@ int main(int argc, const char * argv[]) {
     cairo_surface_write_to_png(surface, "image.png");
     cairo_destroy(cr);
     cairo_surface_destroy(surface);
-    for(int i = 0; i < n; ++i){
-        delete objects[i];
+    for(int i = 0; i < objects.size(); ++i){
+        objects[i].free();
     }
     return 0;
 }

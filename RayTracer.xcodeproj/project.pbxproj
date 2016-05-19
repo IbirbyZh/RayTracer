@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A003B1CF1CB6DA4E00C0030F /* IObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A003B1CE1CB6DA4E00C0030F /* IObject.cpp */; };
-		A003B1D21CB6DA8D00C0030F /* Triangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A003B1D01CB6DA8D00C0030F /* Triangle.cpp */; };
+		A003B1D21CB6DA8D00C0030F /* Multiangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A003B1D01CB6DA8D00C0030F /* Multiangle.cpp */; };
 		A003B1D51CB6EB7900C0030F /* Plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A003B1D31CB6EB7900C0030F /* Plane.cpp */; };
 		A003B1D91CB79B5B00C0030F /* Sun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A003B1D71CB79B5B00C0030F /* Sun.cpp */; };
 		A003B1DC1CB7A11A00C0030F /* RGB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A003B1DA1CB7A11A00C0030F /* RGB.cpp */; };
@@ -18,7 +18,10 @@
 		A0319BDD1CC3DFCB00EBC310 /* Box.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0319BDB1CC3DFCB00EBC310 /* Box.cpp */; };
 		A0319BE11CC3E8CC00EBC310 /* KDTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0319BDF1CC3E8CC00EBC310 /* KDTree.cpp */; };
 		A0319BE51CC41C2200EBC310 /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0319BE31CC41C2200EBC310 /* Ray.cpp */; };
-		A0AD06471CBB8AD800F87734 /* Quadrangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0AD06451CBB8AD800F87734 /* Quadrangle.cpp */; };
+		A03811141CCA14FE00CA7601 /* Polygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A03811121CCA14FE00CA7601 /* Polygon.cpp */; };
+		A03811171CCA325E00CA7601 /* ElementaryPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A03811151CCA325E00CA7601 /* ElementaryPlane.cpp */; };
+		A0BDD3541CECAA5C00CBD775 /* Reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0BDD3521CECAA5C00CBD775 /* Reader.cpp */; };
+		A0BDD3571CECAC9500CBD775 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0BDD3551CECAC9500CBD775 /* Scene.cpp */; };
 		A0CF8F921CB690C8001F1AB3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0CF8F911CB690C8001F1AB3 /* main.cpp */; };
 		A0CF8F9A1CB690EA001F1AB3 /* Point3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0CF8F991CB690EA001F1AB3 /* Point3D.cpp */; };
 		A0CF8F9C1CB691AA001F1AB3 /* libcairo.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A0CF8F9B1CB691AA001F1AB3 /* libcairo.2.dylib */; };
@@ -39,11 +42,11 @@
 /* Begin PBXFileReference section */
 		A003B1CD1CB6D78E00C0030F /* IObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = IObject.hpp; sourceTree = "<group>"; };
 		A003B1CE1CB6DA4E00C0030F /* IObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IObject.cpp; sourceTree = "<group>"; };
-		A003B1D01CB6DA8D00C0030F /* Triangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Triangle.cpp; sourceTree = "<group>"; };
-		A003B1D11CB6DA8D00C0030F /* Triangle.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Triangle.hpp; sourceTree = "<group>"; };
+		A003B1D01CB6DA8D00C0030F /* Multiangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Multiangle.cpp; sourceTree = "<group>"; };
+		A003B1D11CB6DA8D00C0030F /* Multiangle.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Multiangle.hpp; sourceTree = "<group>"; };
 		A003B1D31CB6EB7900C0030F /* Plane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plane.cpp; sourceTree = "<group>"; };
 		A003B1D41CB6EB7900C0030F /* Plane.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Plane.hpp; sourceTree = "<group>"; };
-		A003B1D61CB6FA6C00C0030F /* input.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = input.txt; path = "../../../Library/Developer/Xcode/DerivedData/RayTracer-eumucvdvscjabdevzzjiqvdctqey/Build/Products/Debug/input.txt"; sourceTree = "<group>"; };
+		A003B1D61CB6FA6C00C0030F /* input.rt */ = {isa = PBXFileReference; lastKnownFileType = text; name = input.rt; path = "../../../Library/Developer/Xcode/DerivedData/RayTracer-eumucvdvscjabdevzzjiqvdctqey/Build/Products/Debug/input.rt"; sourceTree = "<group>"; };
 		A003B1D71CB79B5B00C0030F /* Sun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sun.cpp; sourceTree = "<group>"; };
 		A003B1D81CB79B5B00C0030F /* Sun.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Sun.hpp; sourceTree = "<group>"; };
 		A003B1DA1CB7A11A00C0030F /* RGB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RGB.cpp; sourceTree = "<group>"; };
@@ -61,8 +64,14 @@
 		A0319BE01CC3E8CC00EBC310 /* KDTree.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = KDTree.hpp; sourceTree = "<group>"; };
 		A0319BE31CC41C2200EBC310 /* Ray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ray.cpp; sourceTree = "<group>"; };
 		A0319BE41CC41C2200EBC310 /* Ray.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Ray.hpp; sourceTree = "<group>"; };
-		A0AD06451CBB8AD800F87734 /* Quadrangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Quadrangle.cpp; sourceTree = "<group>"; };
-		A0AD06461CBB8AD800F87734 /* Quadrangle.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Quadrangle.hpp; sourceTree = "<group>"; };
+		A03811121CCA14FE00CA7601 /* Polygon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Polygon.cpp; sourceTree = "<group>"; };
+		A03811131CCA14FE00CA7601 /* Polygon.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Polygon.hpp; sourceTree = "<group>"; };
+		A03811151CCA325E00CA7601 /* ElementaryPlane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ElementaryPlane.cpp; sourceTree = "<group>"; };
+		A03811161CCA325E00CA7601 /* ElementaryPlane.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ElementaryPlane.hpp; sourceTree = "<group>"; };
+		A0BDD3521CECAA5C00CBD775 /* Reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Reader.cpp; sourceTree = "<group>"; };
+		A0BDD3531CECAA5C00CBD775 /* Reader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Reader.hpp; sourceTree = "<group>"; };
+		A0BDD3551CECAC9500CBD775 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
+		A0BDD3561CECAC9500CBD775 /* Scene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Scene.hpp; sourceTree = "<group>"; };
 		A0CF8F8E1CB690C8001F1AB3 /* RayTracer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RayTracer; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0CF8F911CB690C8001F1AB3 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A0CF8F981CB690EA001F1AB3 /* Point3D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Point3D.hpp; sourceTree = "<group>"; };
@@ -106,6 +115,8 @@
 				A0319BE31CC41C2200EBC310 /* Ray.cpp */,
 				A003B1D41CB6EB7900C0030F /* Plane.hpp */,
 				A003B1D31CB6EB7900C0030F /* Plane.cpp */,
+				A03811161CCA325E00CA7601 /* ElementaryPlane.hpp */,
+				A03811151CCA325E00CA7601 /* ElementaryPlane.cpp */,
 			);
 			name = Geometry;
 			sourceTree = "<group>";
@@ -124,14 +135,14 @@
 		A0319BE21CC41BC200EBC310 /* Polygons */ = {
 			isa = PBXGroup;
 			children = (
+				A03811131CCA14FE00CA7601 /* Polygon.hpp */,
+				A03811121CCA14FE00CA7601 /* Polygon.cpp */,
 				A003B1CD1CB6D78E00C0030F /* IObject.hpp */,
 				A003B1CE1CB6DA4E00C0030F /* IObject.cpp */,
-				A003B1D11CB6DA8D00C0030F /* Triangle.hpp */,
-				A003B1D01CB6DA8D00C0030F /* Triangle.cpp */,
+				A003B1D11CB6DA8D00C0030F /* Multiangle.hpp */,
+				A003B1D01CB6DA8D00C0030F /* Multiangle.cpp */,
 				A003B1E81CB96A5E00C0030F /* Sphere.hpp */,
 				A003B1E71CB96A5E00C0030F /* Sphere.cpp */,
-				A0AD06461CBB8AD800F87734 /* Quadrangle.hpp */,
-				A0AD06451CBB8AD800F87734 /* Quadrangle.cpp */,
 			);
 			name = Polygons;
 			sourceTree = "<group>";
@@ -142,7 +153,7 @@
 				A0CF8F9B1CB691AA001F1AB3 /* libcairo.2.dylib */,
 				A0CF8F901CB690C8001F1AB3 /* RayTracer */,
 				A0CF8F8F1CB690C8001F1AB3 /* Products */,
-				A003B1D61CB6FA6C00C0030F /* input.txt */,
+				A003B1D61CB6FA6C00C0030F /* input.rt */,
 				A0CF8F9F1CB69285001F1AB3 /* image.png */,
 			);
 			sourceTree = "<group>";
@@ -165,6 +176,10 @@
 				A003B1DF1CB7A89600C0030F /* Color */,
 				A003B1D81CB79B5B00C0030F /* Sun.hpp */,
 				A003B1D71CB79B5B00C0030F /* Sun.cpp */,
+				A0BDD3531CECAA5C00CBD775 /* Reader.hpp */,
+				A0BDD3521CECAA5C00CBD775 /* Reader.cpp */,
+				A0BDD3561CECAC9500CBD775 /* Scene.hpp */,
+				A0BDD3551CECAC9500CBD775 /* Scene.cpp */,
 			);
 			path = RayTracer;
 			sourceTree = "<group>";
@@ -228,17 +243,20 @@
 				A003B1DC1CB7A11A00C0030F /* RGB.cpp in Sources */,
 				A003B1D91CB79B5B00C0030F /* Sun.cpp in Sources */,
 				A0CF8F921CB690C8001F1AB3 /* main.cpp in Sources */,
+				A0BDD3571CECAC9500CBD775 /* Scene.cpp in Sources */,
 				A003B1E61CB7B8A400C0030F /* LAB.cpp in Sources */,
 				A0319BE51CC41C2200EBC310 /* Ray.cpp in Sources */,
 				A003B1E31CB7A92E00C0030F /* XYZ.cpp in Sources */,
 				A0CF8F9A1CB690EA001F1AB3 /* Point3D.cpp in Sources */,
 				A003B1D51CB6EB7900C0030F /* Plane.cpp in Sources */,
-				A0AD06471CBB8AD800F87734 /* Quadrangle.cpp in Sources */,
+				A03811141CCA14FE00CA7601 /* Polygon.cpp in Sources */,
 				A003B1CF1CB6DA4E00C0030F /* IObject.cpp in Sources */,
 				A0319BDD1CC3DFCB00EBC310 /* Box.cpp in Sources */,
 				A0319BE11CC3E8CC00EBC310 /* KDTree.cpp in Sources */,
 				A003B1E91CB96A5E00C0030F /* Sphere.cpp in Sources */,
-				A003B1D21CB6DA8D00C0030F /* Triangle.cpp in Sources */,
+				A003B1D21CB6DA8D00C0030F /* Multiangle.cpp in Sources */,
+				A0BDD3541CECAA5C00CBD775 /* Reader.cpp in Sources */,
+				A03811171CCA325E00CA7601 /* ElementaryPlane.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -13,25 +13,11 @@
 Sphere::Sphere():
     __S(), __radius(){}
 
-Sphere::Sphere(const Point3D& _S, const double& _radius,
-               const RGB& _color,
-               const double& _reflect, const double& _refract):
-    __S(_S), __radius(_radius)
-{
-    __color = _color;
-    __reflect = _reflect;
-    __refract = _refract;
-}
+Sphere::Sphere(const Point3D& _S, const double& _radius):
+    __S(_S), __radius(_radius){}
 
-Sphere::Sphere(Point3D&& _S, double&& _radius,
-               RGB&& _color,
-               double&& _reflect, double&& _refract):
-    __S(std::move(_S)), __radius(std::move(_radius))
-{
-    __color = std::move(_color);
-    __reflect = std::move(_reflect);
-    __refract = std::move(_refract);
-}
+Sphere::Sphere(Point3D&& _S, double&& _radius):
+    __S(std::move(_S)), __radius(std::move(_radius)){}
 
 Sphere::~Sphere(){}
 
@@ -78,4 +64,3 @@ void Sphere::radius(const double& _radius){__radius = _radius;}
 
 void Sphere::S(Point3D&& _S){__S = std::move(_S);}
 void Sphere::radius(double&& _radius){__radius = std::move(_radius);}
-
