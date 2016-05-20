@@ -124,7 +124,7 @@ void Node::split(int h)
             value = rightBorder[uk2].value;
             --pravee;
             predIsLeft = false;
-        }else if(uk2 >= n){
+        }else if(uk2 + 1 >= n){
             ++uk1;
             value = leftBorder[uk1].value;
             predIsLeft = true;
