@@ -18,12 +18,15 @@ FileReader::~FileReader(){
     input.close();
 }
 
+FileReader::Mat::Mat():
+rgb(), reflect(), refract(){}
+
 void FileReader::Read(Scene& scene, std::vector<Sun>& suns, std::vector<Polygon>& objects)
 {
-    std::string s;
     std::map<std::string, Mat> materials;
     while(getline(input, s)){
-        std::stringstream myStream(std::move(s));
+        myStream.clear();
+        myStream.str(std::move(s));
         myStream >> s;
         if (s[0] == '#'){
             continue;
@@ -49,13 +52,14 @@ void FileReader::Read(Scene& scene, std::vector<Sun>& suns, std::vector<Polygon>
 
 void FileReader::ReadScene(Scene &scene)
 {
-    std::string s;
     double xO, yO, zO;
     double xtl, ytl, ztl;
     double xtr, ytr, ztr;
     double xdl, ydl, zdl;
+    xO = yO = zO = xtl = ytl = ztl = xtr = ytr = ztr = xdl = ydl = zdl = 0;
     while(getline(input, s)){
-        std::stringstream myStream(std::move(s));
+        myStream.clear();
+        myStream.str(std::move(s));
         myStream >> s;
         if (s[0] == '#'){
             continue;
@@ -86,9 +90,9 @@ void FileReader::ReadScene(Scene &scene)
 
 void FileReader::ReadSuns(std::vector<Sun> &suns, Scene& scene)
 {
-    std::string s;
     while(getline(input, s)){
-        std::stringstream myStream(std::move(s));
+        myStream.clear();
+        myStream.str(std::move(s));
         myStream >> s;
         if (s[0] == '#'){
             continue;
@@ -109,11 +113,12 @@ void FileReader::ReadSuns(std::vector<Sun> &suns, Scene& scene)
 
 void FileReader::ReadSun(std::vector<Sun> &suns)
 {
-    std::string s;
     double xO, yO, zO;
-    double power;
+    xO = yO = zO = 0;
+    double power = 0;
     while(getline(input, s)){
-        std::stringstream myStream(std::move(s));
+        myStream.clear();
+        myStream.str(std::move(s));
         myStream >> s;
         if (s[0] == '#'){
             continue;
@@ -135,9 +140,9 @@ void FileReader::ReadSun(std::vector<Sun> &suns)
 
 void FileReader::ReadReference(Scene& scene)
 {
-    std::string s;
     while(getline(input, s)){
-        std::stringstream myStream(std::move(s));
+        myStream.clear();
+        myStream.str(std::move(s));
         myStream >> s;
         if (s[0] == '#'){
             continue;
@@ -158,9 +163,9 @@ void FileReader::ReadReference(Scene& scene)
 
 void FileReader::ReadMatereals(std::map<std::string, Mat> &materials)
 {
-    std::string s;
     while(getline(input, s)){
-        std::stringstream myStream(std::move(s));
+        myStream.clear();
+        myStream.str(std::move(s));
         myStream >> s;
         if (s[0] == '#'){
             continue;
@@ -177,11 +182,11 @@ void FileReader::ReadMatereals(std::map<std::string, Mat> &materials)
 
 void FileReader::ReadMatereal(std::map<std::string, Mat> &materials)
 {
-    std::string s;
     Mat m;
     std::string id;
     while(getline(input, s)){
-        std::stringstream myStream(std::move(s));
+        myStream.clear();
+        myStream.str(std::move(s));
         myStream >> s;
         if (s[0] == '#'){
             continue;
@@ -213,9 +218,9 @@ void FileReader::ReadMatereal(std::map<std::string, Mat> &materials)
 
 void FileReader::ReadObjects(std::vector<Polygon>& objects, const std::map<std::string, Mat> &materials)
 {
-    std::string s;
     while(getline(input, s)){
-        std::stringstream myStream(std::move(s));
+        myStream.clear();
+        myStream.str(std::move(s));
         myStream >> s;
         if (s[0] == '#'){
             continue;
@@ -240,11 +245,12 @@ void FileReader::ReadObjects(std::vector<Polygon>& objects, const std::map<std::
 
 void FileReader::ReadSphere(std::vector<Polygon> &objects, const std::map<std::string, Mat> &materials)
 {
-    std::string s;
     Mat m;
     double x, y, z, r;
+    x = y = z = r = 0;
     while(getline(input, s)){
-        std::stringstream myStream(std::move(s));
+        myStream.clear();
+        myStream.str(std::move(s));
         myStream >> s;
         if (s[0] == '#'){
             continue;
@@ -271,12 +277,12 @@ void FileReader::ReadSphere(std::vector<Polygon> &objects, const std::map<std::s
 
 void FileReader::ReadTriangle(std::vector<Polygon> &objects, const std::map<std::string, Mat> &materials)
 {
-    std::string s;
     Mat m;
     double x[3], y[3], z[3];
     int i = 0;
     while(getline(input, s)){
-        std::stringstream myStream(std::move(s));
+        myStream.clear();
+        myStream.str(std::move(s));
         myStream >> s;
         if (s[0] == '#'){
             continue;
@@ -288,6 +294,9 @@ void FileReader::ReadTriangle(std::vector<Polygon> &objects, const std::map<std:
         }
         if (s == "vertex"){
             myStream >> x[i] >> y[i] >> z[i];
+            x[i] += epsilon * (rand() % 3 - 1);
+            y[i] += epsilon * (rand() % 3 - 1);
+            z[i] += epsilon * (rand() % 3 - 1);
             ++i;
             continue;
         }
@@ -301,12 +310,12 @@ void FileReader::ReadTriangle(std::vector<Polygon> &objects, const std::map<std:
 
 void FileReader::ReadQuadrangle(std::vector<Polygon> &objects, const std::map<std::string, Mat> &materials)
 {
-    std::string s;
     Mat m;
     double x[4], y[4], z[4];
     int i = 0;
     while(getline(input, s)){
-        std::stringstream myStream(std::move(s));
+        myStream.clear();
+        myStream.str(std::move(s));
         myStream >> s;
         if (s[0] == '#'){
             continue;
@@ -318,6 +327,9 @@ void FileReader::ReadQuadrangle(std::vector<Polygon> &objects, const std::map<st
         }
         if (s == "vertex"){
             myStream >> x[i] >> y[i] >> z[i];
+            x[i] += epsilon * (rand() % 3 - 1);
+            y[i] += epsilon * (rand() % 3 - 1);
+            z[i] += epsilon * (rand() % 3 - 1);
             ++i;
             continue;
         }

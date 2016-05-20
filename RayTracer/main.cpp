@@ -18,9 +18,12 @@
 #include "Reader.hpp"
 #include "Scene.hpp"
 #include <chrono>
+#include <string>
 
 static const double DELTA_CONST = 1E-6;
-static const double DEC = 20;
+static const double DEC = 10;
+static const int MAX_DEEP = 2;
+static const bool ZERK = true;
 
 bool findPoint(const Ray& ray,
                Point3D& x, const Polygon*& object, const KDTree& kd)
@@ -28,42 +31,77 @@ bool findPoint(const Ray& ray,
     return kd.crossing(ray, x, object);
 }
 
+void addLight(const Ray& ray, const std::vector<Sun>& suns, LAB& lcolor, const Scene& scene,
+              const KDTree& kd, const Point3D& x, const Polygon* const object)
+{
+    const Polygon* empty;
+    lcolor.decreaseLight(DEC);
+    double l = lcolor.l();
+    Point3D delta = object -> normal(x);
+    if(delta * ray.rail() > 0){
+        delta *= -1;
+    }
+    delta *= DELTA_CONST;
+    for(auto i = suns.begin(); i < suns.end(); ++i){
+        Point3D sunPoint;
+        double coef = (i->S() - x).normalize() * (object->normal(x));
+        coef *= coef;
+        if(findPoint(Ray(x + delta, (i->S() - x).normalize()), sunPoint, empty, kd)){
+            double dist;
+            if((x - sunPoint).length2() > (dist = (x - i->S()).length2())){
+                lcolor.increaseLight(l * (DEC - 1) * coef * scene.normDist * scene.normDist / dist * i->intensity() / scene.normPower);
+            }
+        }else{
+            double dist = (x - i->S()).length2();
+            lcolor.increaseLight(l * (DEC - 1) * coef * scene.normDist * scene.normDist / dist * i->intensity() / scene.normPower);
+        }
+    }
+}
+
 void rayTrace(const Ray& ray,
-              std::vector<Sun>& suns, RGB& rgb, Scene& scene, const KDTree& kd)
+              const std::vector<Sun>& suns, RGB& rgb, const Scene& scene, const KDTree& kd, int h)
 {
     rgb = RGB();
+    if(h >= MAX_DEEP)
+        return;
     Point3D x;
     const Polygon* object;
     if(findPoint(ray, x, object, kd)){
         LAB lcolor(XYZ(object->color()));
-        lcolor.decreaseLight(DEC);
-        Point3D delta = object -> normal(x);
-        if(delta * ray.rail() > 0){
-            delta *= -1;
-        }
-        delta *= DELTA_CONST;
-        for(auto i = suns.begin(); i < suns.end(); ++i){
-            Point3D sunPoint;
-            double coef = (i->S() - x).normalize() * (object->normal(x));
-            coef *= coef;
-            if(findPoint(Ray(x + delta, (i->S() - x).normalize()), sunPoint, object, kd)){
-                double dist;
-                if((x - sunPoint).length2() > (dist = (x - i->S()).length2())){
-                    lcolor.increaseLight(DEC * coef * scene.normDist * scene.normDist / dist * i->intensity() / scene.normPower);
+        addLight(ray, suns, lcolor, scene, kd, x, object);
+        rgb = RGB(XYZ(lcolor));
+        if (ZERK){
+            double alpha;
+            if ((alpha = object->reflect()) > DELTA_CONST){
+                Point3D prgb(rgb.rgb());
+                prgb *= 1 - alpha;
+                Point3D newRail = object->normal(x);
+                Point3D delta = newRail;
+                if(delta * ray.rail() > 0){
+                    delta *= -1;
                 }
-            }else{
-                double dist = (x - i->S()).length2();
-                lcolor.increaseLight(DEC * coef * scene.normDist * scene.normDist / dist * i->intensity() / scene.normPower);
+                delta *= DELTA_CONST;
+                newRail *= -2 * (object->normal(x) * ray.rail());
+                newRail += ray.rail();
+                Ray newRay(x + delta, newRail);
+                rayTrace(newRay, suns, rgb, scene, kd, h + 1);
+                Point3D pextra(rgb.rgb());
+                pextra *= alpha;
+                //std::cout <<alpha;
+                rgb.rgb(prgb + pextra);
             }
         }
-        rgb = RGB(XYZ(lcolor));
     }
 }
 
 int main(int argc, const char * argv[]) {
     //FileReader reader("input.rt");
     //FileReader reader("spheres_pure1.rt");
-    FileReader reader("gnome_pure.rt");
+    //FileReader reader("gnome_pure.rt");
+    const char* name = "input.rt";
+    if (argc >= 2)
+        name = argv[1];
+    FileReader reader(name);
     std::chrono::time_point<std::chrono::system_clock> start, end;
     Scene scene;
     std::vector<Polygon> objects;
@@ -96,7 +134,7 @@ int main(int argc, const char * argv[]) {
     start = std::chrono::system_clock::now();
     std::vector<std::vector<RGB>> rgb(RIGHT_MAX, std::vector<RGB>(DOWN_MAX));
     while(scene.next(h)){
-        rayTrace(Ray(x0, (h - x0).normalize()), suns, rgb[i % RIGHT_MAX][i / RIGHT_MAX], scene, kd);
+        rayTrace(Ray(x0, (h - x0).normalize()), suns, rgb[i % RIGHT_MAX][i / RIGHT_MAX], scene, kd, 0);
         //rayTrace(Ray(x0, (h - x0).normalize()), suns, rgb[RIGHT_MAX - i % RIGHT_MAX - 1][i / RIGHT_MAX], scene, kd);
         //rgb.adecvat();
         //assert(rgb.r() <= 1 && rgb.g() <= 1 && rgb.b() <= 1);

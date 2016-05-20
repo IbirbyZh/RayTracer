@@ -73,7 +73,7 @@ Node::Node():left(NULL), right(NULL), parent(NULL), splitPlane(), mainBox(), obj
 void Node::split(int h)
 {
     if (h > MAX_HEIGHT){
-        //std::cerr << static_cast<int>(objectsWithBox.size()) << '\n';
+        std::cerr << static_cast<int>(objectsWithBox.size()) << '\n';
         return;
     }
     PlaneType axis = xType;
@@ -112,7 +112,7 @@ void Node::split(int h)
     int bestLevee = levee;
     int bestPravee = pravee;
     bool predIsLeft = true;
-    double sax = (n) * (max - value) + (uk2 + 1) * (value - min);
+    double sax = n * (max - min);
     double bestValue = min, bestSah = sax;
     while(uk1 + 1 < n || uk2 + 1 < n){
         if (predIsLeft == true){
@@ -124,7 +124,7 @@ void Node::split(int h)
             value = rightBorder[uk2].value;
             --pravee;
             predIsLeft = false;
-        }else if(uk2 + 1 >= n){
+        }else if(uk2 >= n){
             ++uk1;
             value = leftBorder[uk1].value;
             predIsLeft = true;
@@ -140,6 +140,9 @@ void Node::split(int h)
                 predIsLeft = true;
             }
         }
+        if (value + epsilon >= max){
+            break;
+        }
         double newSax = pravee * (max - value) + levee * (value - min);
         if (newSax < bestSah){
             bestSah = newSax;
@@ -148,18 +151,17 @@ void Node::split(int h)
             bestPravee = pravee;
         }
     }
-    if(bestSah >= (n - 3) * (max - min)){
-        //std::cerr << static_cast<int>(objectsWithBox.size()) << '\n';
+    if(bestSah >= (n - 3) * (max - min) || bestValue == max || bestValue == min){
+        std::cerr << static_cast<int>(objectsWithBox.size()) << '\n';
         return;
     }
     value = bestValue;
     splitPlane = ElementaryPlane(axis, value);
     
-    for(levee = 0; levee + 1 < n && leftBorder[levee + 1].value < bestValue; ++levee);
-    //assert(levee + 1 == bestLevee);
+    for(levee = 0; levee + 1 < n && leftBorder[levee + 1].value< bestValue; ++levee);
     
     for(pravee = 0; pravee + 1 < n && bestValue < rightBorder[n - pravee - 1].value; ++pravee);
-    //assert(pravee + 1 == bestPravee);
+    
     assert(levee + pravee + 2 >= n);
     left = new Node();
     left -> parent = this;

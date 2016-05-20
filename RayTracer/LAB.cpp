@@ -71,7 +71,7 @@ void LAB::increaseLight(const double& intensity)
     }
     double ___l = __lab.x();
     if (___l <= 100){
-        __lab.x(std::fmin(___l * intensity, 100));
+        __lab.x(std::fmin(___l + intensity, 100));
     }
 }
 

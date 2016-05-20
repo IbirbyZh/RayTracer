@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include "Sun.hpp"
@@ -22,6 +23,7 @@
 class FileReader{
 private:
     struct Mat{
+        Mat();
         RGB rgb;
         double reflect, refract;
     };
@@ -32,6 +34,8 @@ public:
     void Read(Scene& scene, std::vector<Sun>& suns, std::vector<Polygon> &objects);
 private:
     std::ifstream input;
+    std::string s;
+    std::stringstream myStream;
     void ReadScene(Scene& scene);
     void ReadMatereals(std::map<std::string, Mat>& materials);
     void ReadMatereal(std::map<std::string, Mat>& materials);

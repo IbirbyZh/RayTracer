@@ -13,6 +13,8 @@
 #include "Ray.hpp"
 #include "ElementaryPlane.hpp"
 
+static const double epsilon = 1E-9;
+
 class Box{
 public:
     Box();
