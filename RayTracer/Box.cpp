@@ -9,6 +9,8 @@
 #include "Box.hpp"
 #include "ElementaryPlane.hpp"
 #include <utility>
+#include <cmath>
+#include <iostream>
 
 Box::Box():
     __A(), __B(){}
@@ -78,7 +80,7 @@ bool Box::crossing(const Ray& ray, Point3D& x) const
 
 int Box::doubleCrossing(const Ray& ray, Point3D& x, Point3D& y) const
 {
-    double dist = MAX_DISTANCE, dist2 = MAX_DISTANCE;
+    /*double dist = MAX_DISTANCE, dist2 = MAX_DISTANCE;
     Point3D ans;
     if(ElementaryPlane(xType, __A.x()).crossing(ray, ans)){
         if(isInTube(ans, __A, __B, xType)){
@@ -170,7 +172,34 @@ int Box::doubleCrossing(const Ray& ray, Point3D& x, Point3D& y) const
             }
         }
     }
-    return static_cast<int>(dist + 1 < MAX_DISTANCE) + static_cast<int>(dist2 + 1 < MAX_DISTANCE);
+    return static_cast<int>(dist + 1 < MAX_DISTANCE) + static_cast<int>(dist2 + 1 < MAX_DISTANCE);*/
+    double t[3][2];
+    const Point3D& startPoint = ray.startPoint();
+    Point3D rail = ray.rail();
+    findT(__A.x(), __B.x(), startPoint.x(), rail.x(), t[0][0], t[0][1]);
+    findT(__A.y(), __B.y(), startPoint.y(), rail.y(), t[1][0], t[1][1]);
+    findT(__A.z(), __B.z(), startPoint.z(), rail.z(), t[2][0], t[2][1]);
+    double tans[2];
+    tans[0] = -MAX_DISTANCE;
+    tans[1] = MAX_DISTANCE;
+    for(int i = 0; i < 3; ++i){
+        tans[0] = fmax(tans[0], t[i][0]);
+        tans[1] = fmin(tans[1], t[i][1]);
+    }
+    if(tans[0] >= tans[1] || tans[1] < 0){
+        return 0;
+    }
+    if (tans[0] < 0){
+        rail *= tans[1];
+        x = startPoint + rail;
+        return 1;
+    }
+    rail *= tans[0];
+    x = startPoint + rail;
+    rail *= tans[1] / tans[0];
+    y = startPoint + rail;
+    //std::cout << tans[0] << ' ' <<tans[1] <<'\n';
+    return 2;
 }
 
 const Point3D& Box::A() const{return __A;}
@@ -208,4 +237,24 @@ bool Box::isIn(const Point3D& S) const
     
     
     return inX && inY && inZ;
+}
+
+void Box::findT(const double& l, const double& r, const double& x,
+                const double& a, double& t1, double& t2)
+{
+    if (a == 0){
+        if(l <= x && r >= x){
+            t1 = -MAX_DISTANCE;
+            t2 = MAX_DISTANCE;
+        }else{
+            t1 = 1;
+            t2 = -1;
+        }
+    }else{
+        t1 = (l - x) / a;
+        t2 = (r - x) / a;
+        if(t1 > t2){
+            std::swap(t1, t2);
+        }
+    }
 }

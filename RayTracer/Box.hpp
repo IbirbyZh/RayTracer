@@ -34,6 +34,7 @@ public:
 private:
     Point3D __A, __B;
     static bool isInTube(const Point3D& S, const Point3D& Min, const Point3D& Max, PlaneType type);
+    static void findT(const double& l, const double& r, const double& x, const double& a, double& t1, double& t2);
 };
 
 #endif /* Box_hpp */

@@ -14,7 +14,7 @@
 #include <vector>
 #include "ElementaryPlane.hpp"
 
-static const int MAX_HEIGHT = 10;
+static const int MAX_HEIGHT = 15;
 
 struct mySpec{
     mySpec(const Polygon* p, const Box* b);
