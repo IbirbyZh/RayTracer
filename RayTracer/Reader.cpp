@@ -294,9 +294,11 @@ void FileReader::ReadTriangle(std::vector<Polygon> &objects, const std::map<std:
         }
         if (s == "vertex"){
             myStream >> x[i] >> y[i] >> z[i];
+            /*
             x[i] += epsilon * (rand() % 3 - 1);
             y[i] += epsilon * (rand() % 3 - 1);
             z[i] += epsilon * (rand() % 3 - 1);
+             */
             ++i;
             continue;
         }
@@ -327,9 +329,11 @@ void FileReader::ReadQuadrangle(std::vector<Polygon> &objects, const std::map<st
         }
         if (s == "vertex"){
             myStream >> x[i] >> y[i] >> z[i];
+            /*
             x[i] += epsilon * (rand() % 3 - 1);
             y[i] += epsilon * (rand() % 3 - 1);
             z[i] += epsilon * (rand() % 3 - 1);
+            */
             ++i;
             continue;
         }

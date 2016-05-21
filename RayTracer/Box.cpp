@@ -197,10 +197,15 @@ bool Box::isInTube(const Point3D& S, const Point3D& Min, const Point3D& Max, Pla
 bool Box::isIn(const Point3D& S) const
 {
     bool inX, inY, inZ;
-    
+    /*
     inX = __A.x() - epsilon <= S.x() && __B.x() + epsilon >= S.x();
     inY = __A.y() - epsilon <= S.y() && __B.y() + epsilon >= S.y();
     inZ = __A.z() - epsilon <= S.z() && __B.z() + epsilon >= S.z();
+    */
+    inX = __A.x() <= S.x() && __B.x() >= S.x();
+    inY = __A.y() <= S.y() && __B.y() >= S.y();
+    inZ = __A.z() <= S.z() && __B.z() >= S.z();
+    
     
     return inX && inY && inZ;
 }

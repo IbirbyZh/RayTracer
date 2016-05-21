@@ -61,6 +61,18 @@ Box Multiangle::box() const
         yMax = std::max(yMax, __points[i].y());
         zMax = std::max(zMax, __points[i].z());
     }
+    if(xMax - xMin < epsilon){
+        xMax += epsilon;
+        xMin -= epsilon;
+    }
+    if(yMax - yMin < epsilon){
+        yMax += epsilon;
+        yMin -= epsilon;
+    }
+    if(zMax - zMin < epsilon){
+        zMax += epsilon;
+        zMin -= epsilon;
+    }
     return Box(Point3D(std::move(xMin), std::move(yMin), std::move(zMin)),
                Point3D(std::move(xMax), std::move(yMax), std::move(zMax)));
 }

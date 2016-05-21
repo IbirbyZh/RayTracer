@@ -73,7 +73,7 @@ Node::Node():left(NULL), right(NULL), parent(NULL), splitPlane(), mainBox(), obj
 void Node::split(int h)
 {
     if (h > MAX_HEIGHT){
-        std::cerr << static_cast<int>(objectsWithBox.size()) << '\n';
+        //std::cerr << static_cast<int>(objectsWithBox.size()) << '\n';
         return;
     }
     PlaneType axis = xType;
@@ -152,7 +152,7 @@ void Node::split(int h)
         }
     }
     if(bestSah >= (n - 3) * (max - min) || bestValue == max || bestValue == min){
-        std::cerr << static_cast<int>(objectsWithBox.size()) << '\n';
+        //std::cerr << static_cast<int>(objectsWithBox.size()) << '\n';
         return;
     }
     value = bestValue;

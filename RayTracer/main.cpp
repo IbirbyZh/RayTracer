@@ -22,7 +22,7 @@
 
 static const double DELTA_CONST = 1E-6;
 static const double DEC = 10;
-static const int MAX_DEEP = 2;
+static const int MAX_DEEP = 3;
 static const bool ZERK = true;
 
 bool findPoint(const Ray& ray,
