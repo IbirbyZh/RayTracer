@@ -28,7 +28,9 @@ public:
     void points(std::vector<Point3D>&& _points);
     
 private:
+    void initNorm();
     std::vector<Point3D> __points;
+    Point3D n;
 };
 
 #endif /* Multiangle_hpp */

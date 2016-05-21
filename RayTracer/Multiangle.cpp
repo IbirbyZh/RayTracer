@@ -13,13 +13,28 @@
 #include <algorithm>
 
 Multiangle::Multiangle():
-    __points(){}
+    __points(), n(){}
 
 Multiangle::Multiangle(const std::vector<Point3D>& _points):
-    __points(_points){}
+    __points(_points), n()
+{
+    initNorm();
+}
 
 Multiangle::Multiangle(std::vector<Point3D>&& _points):
-    __points(std::move(_points)){}
+    __points(std::move(_points)), n()
+{
+    initNorm();
+}
+
+void Multiangle::initNorm()
+{
+    if((__points[1] - __points[0]) * (__points[2] - __points[1]) < 0){
+        n = ((__points[1] - __points[0]) % (__points[2] - __points[1])).normalize();
+    }else{
+        n = ((__points[2] - __points[1]) % (__points[3 % __points.size()] - __points[2])).normalize();
+    }
+}
 
 Multiangle::~Multiangle(){}
 
@@ -29,7 +44,6 @@ bool Multiangle::crossing(const Ray& ray, Point3D& x) const
     if (!plane.crossing(ray, x)){
         return false;
     }
-    Point3D n = normal();
     bool ans = true;
     for(int i = 0; i < __points.size(); ++i){
         int next = (i + 1) % __points.size();
@@ -43,7 +57,7 @@ bool Multiangle::crossing(const Ray& ray, Point3D& x) const
 
 Point3D Multiangle::normal(const Point3D& x) const
 {
-    return ((__points[1] - __points[0]) % (__points[2] - __points[1])).normalize();
+    return n;
 }
 
 Box Multiangle::box() const

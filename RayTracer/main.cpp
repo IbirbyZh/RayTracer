@@ -19,11 +19,13 @@
 #include "Scene.hpp"
 #include <chrono>
 #include <string>
+#include <cmath>
 
-static const double DELTA_CONST = 1E-6;
+static const double DELTA_CONST = 1E-5;
 static const double DEC = 10;
-static const int MAX_DEEP = 3;
+static const int MAX_DEEP = 5;
 static const bool ZERK = true;
+static const bool PREL = true;
 
 bool findPoint(const Ray& ray,
                Point3D& x, const Polygon*& object, const KDTree& kd)
@@ -67,28 +69,63 @@ void rayTrace(const Ray& ray,
     Point3D x;
     const Polygon* object;
     if(findPoint(ray, x, object, kd)){
-        LAB lcolor(XYZ(object->color()));
-        addLight(ray, suns, lcolor, scene, kd, x, object);
-        rgb = RGB(XYZ(lcolor));
-        if (ZERK){
-            double alpha;
-            if ((alpha = object->reflect()) > DELTA_CONST){
-                Point3D prgb(rgb.rgb());
-                prgb *= 1 - alpha;
-                Point3D newRail = object->normal(x);
-                Point3D delta = newRail;
-                if(delta * ray.rail() > 0){
+        bool fullMirror = false;
+        bool reflecting = false;
+        if (PREL){
+            double n;
+            if ((n = object->refract()) > DELTA_CONST){
+                Point3D paral = object->normal(x);
+                Point3D perp;
+                Point3D delta = paral;
+                if(delta * ray.rail() < 0){
+                    n = 1 / n;
                     delta *= -1;
+                }else{
+                    //n = 1 / n;
                 }
                 delta *= DELTA_CONST;
-                newRail *= -2 * (object->normal(x) * ray.rail());
-                newRail += ray.rail();
-                Ray newRay(x + delta, newRail);
-                rayTrace(newRay, suns, rgb, scene, kd, h + 1);
-                Point3D pextra(rgb.rgb());
-                pextra *= alpha;
-                //std::cout <<alpha;
-                rgb.rgb(prgb + pextra);
+                paral *= paral * ray.rail();
+                perp = ray.rail() - paral;
+                double fi = asin(perp.length()) * n;
+                if(asin(fabs(perp.length()) * n) >= 1){
+                    fullMirror = true;
+                }else{
+                    fi = asin(fi);
+                    perp.normalize();
+                    perp *= tan(fi) * paral.length();
+                    Ray newRay(x + delta, (perp + paral).normalize());
+                    rayTrace(newRay, suns, rgb, scene, kd, h + 1);
+                    reflecting = true;
+                }
+            }
+        }
+        if(!reflecting){
+            LAB lcolor(XYZ(object->color()));
+            addLight(ray, suns, lcolor, scene, kd, x, object);
+            rgb = RGB(XYZ(lcolor));
+            if (ZERK){
+                double alpha = 0;
+                if (fullMirror || (alpha = object->reflect()) > DELTA_CONST){
+                    if (fullMirror){
+                        alpha = 1;
+                    }
+                    Point3D prgb(rgb.rgb());
+                    prgb *= 1 - alpha;
+                    Point3D newRail = object->normal(x);
+                    Point3D delta = newRail;
+                    if(delta * ray.rail() > 0){
+                        delta *= -1;
+                    }
+                    delta *= DELTA_CONST;
+                    newRail *= -2 * (object->normal(x) * ray.rail());
+                    newRail += ray.rail();
+                    Ray newRay(x + delta, newRail);
+                    rayTrace(newRay, suns, rgb, scene, kd, h + 1);
+                    Point3D pextra(rgb.rgb());
+                    pextra *= alpha;
+                    //std::cout <<alpha;
+                    rgb.rgb(prgb + pextra);
+                }
             }
         }
     }
