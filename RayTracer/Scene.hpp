@@ -12,7 +12,7 @@
 #include "Point3D.hpp"
 
 
-static const int HEIGHT = 900;
+static const int HEIGHT = 768;
 
 static const int ANTI_ALI = 2;
 static const int RIGHT_MAX = HEIGHT * 4 / 3 * ANTI_ALI;

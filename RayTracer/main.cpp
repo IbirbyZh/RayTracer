@@ -21,7 +21,7 @@
 #include <string>
 #include <cmath>
 
-static const double DELTA_CONST = 1E-5;
+static const double DELTA_CONST = 1E-3;
 static const double DEC = 10;
 static const int MAX_DEEP = 5;
 static const bool ZERK = true;
@@ -87,7 +87,7 @@ void rayTrace(const Ray& ray,
                 paral *= paral * ray.rail();
                 perp = ray.rail() - paral;
                 double fi = asin(perp.length()) * n;
-                if(asin(fabs(perp.length()) * n) >= 1){
+                if(fabs(fi) >= 1){
                     fullMirror = true;
                 }else{
                     fi = asin(fi);
@@ -217,12 +217,14 @@ int main(int argc, const char * argv[]) {
     l = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count()
     / static_cast<double>(1000);
     std::cout << "100%, Time: " << l << "s\n";
+    /*
     cairo_set_source_rgb(cr, 0.5, 0.5, 0.5);
     cairo_rectangle (cr, 0, 0, 10, 10);
     cairo_fill (cr);
     cairo_set_source_rgb(cr, 0.5, 0.5, 0.5);
     cairo_rectangle (cr, 0, 100, 10, 10);
     cairo_fill (cr);
+    */
     cairo_surface_write_to_png(surface, "image.png");
     cairo_destroy(cr);
     cairo_surface_destroy(surface);
